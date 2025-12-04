@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Google Play — Aryan Guddy New App</title>
+
+<link rel="manifest" id="manifest-link">
+<meta name="theme-color" content="#1a73e8">
+
+<style>
+  :root{
+    --bg:#f1f3f4; --card:#fff; --accent:#1a73e8; --dark:#202124; --muted:#5f6368;
+    --radius:12px; --shadow:0 8px 24px rgba(0,0,0,.08);
+    font-family:Roboto,Arial,sans-serif;
+  }
+  body{margin:0;background:var(--bg);color:var(--dark)}
+  .topbar{background:#fff;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #e8eaed;position:sticky;top:0;z-index:8}
+  .search{flex:1;background:#f8f9fa;padding:10px;border:1px solid #e6e8ea;border-radius:8px;display:flex;gap:8px;align-items:center}
+  .search input{border:0;background:transparent;outline:0;font-size:14px;width:100%}
+  .wrap{max-width:980px;margin:18px auto;padding:0 16px;}
+  .store-main{display:flex;gap:20px}
+  .left{width:340px}
+  .app-card{background:var(--card);padding:18px;border-radius:14px;box-shadow:var(--shadow)}
+  .icon{width:96px;height:96px;border-radius:20px;overflow:hidden}
+  .icon img{width:100%;height:100%;border-radius:20px;object-fit:cover}
+  h1{margin:6px 0 2px;font-size:18px}
+  .meta{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .install-btn{background:var(--accent);color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;border:none;cursor:pointer}
+  .secondary{background:#fff;border:1px solid #dcdcdc;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .ss{width:94px;height:168px;border-radius:10px;background:#f1f1f1;display:flex;justify-content:center;align-items:center;color:#777;font-size:12px}
+  .right{flex:1}
+  .card{background:var(--card);padding:16px;border-radius:14px;box-shadow:var(--shadow);margin-bottom:14px}
+  footer{max-width:980px;margin:20px auto 60px;padding:0 16px;color:#777;font-size:13px}
+  @media(max-width:880px){.store-main{flex-direction:column}.left{width:100%}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <b>Google Play</b>
+  <div class="search"><input placeholder="Search apps & games"></div>
+</div>
+
+<div class="wrap">
+  <div class="store-main">
+
+    <div class="left">
+      <div class="app-card">
+        <div style="display:flex;gap:16px">
+          <div class="icon">
+            <img src="https://tse1.mm.bing.net/th/id/OIP.b2KSpfWX0DThaZBAfZV0dQHaFO?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3">
+          </div>
+          <div>
+            <h1>Aryan Guddy New App</h1>
+            <div class="meta">4.8 ★ • Social • 10M+</div>
+
+            <button id="installBtn" class="install-btn">Install</button>
+            <button id="openBtn" class="secondary" style="display:none">Open</button>
+            <button id="downloadBtn" class="secondary">Download HTML</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:18px">
+          <div class="ss">Screenshot</div>
+          <div class="ss">Screenshot</div>
+          <div class="ss">Screenshot</div>
+        </div>
+
+        <p style="color:#777;margin-top:12px;font-size:13px">
+          Works only on Chrome Android (HTTPS or localhost).  
+        </p>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <h3>About this app</h3>
+        <p style="color:#777;line-height:1.5">
+          Aryan Guddy New App — demo PWA that installs like a real Play Store app.
+          Runs standalone with no browser UI after installation.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Permissions</h3>
+        <ul style="color:#777;line-height:1.6">
+          <li>Offline caching</li>
+          <li>No tracking</li>
+          <li>No external JS</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Demo single-file Play Store PWA</footer>
+
+<script>
+/* ------------------ Manifest ------------------ */
+const manifestObj = {
+  name: "Aryan Guddy New App",
+  short_name: "GuddyApp",
+  start_url: "./?homescreen=1",
+  display: "standalone",
+  theme_color: "#1a73e8",
+  background_color: "#ffffff",
+  icons: [
+    {
+      src: "https://tse1.mm.bing.net/th/id/OIP.b2KSpfWX0DThaZBAfZV0dQHaFO?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
+      sizes: "192x192",
+      type: "image/png"
+    },
+    {
+      src: "https://tse1.mm.bing.net/th/id/OIP.b2KSpfWX0DThaZBAfZV0dQHaFO?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
+      sizes: "512x512",
+      type: "image/png"
+    }
+  ]
+};
+
+const mb = new Blob([JSON.stringify(manifestObj)],{type:"application/json"});
+document.getElementById("manifest-link").href = URL.createObjectURL(mb);
+
+/* ------------------ Service Worker ------------------ */
+const swCode = `
+self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>self.clients.claim());
+self.addEventListener('fetch',e=>{
+  e.respondWith(fetch(e.request).catch(()=>new Response("Offline")));
+});
+`;
+const swBlob = new Blob([swCode],{type:"application/javascript"});
+navigator.serviceWorker.register(URL.createObjectURL(swBlob));
+
+/* ------------------ Install PWA ------------------ */
+let deferredPrompt;
+const installBtn=document.getElementById("installBtn");
+const openBtn=document.getElementById("openBtn");
+
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  installBtn.style.display="inline-block";
+});
+
+installBtn.onclick=async()=>{
+  if(!deferredPrompt){
+    alert("Use Chrome menu → Add to Home Screen");
+    return;
+  }
+  deferredPrompt.prompt();
+  const choice=await deferredPrompt.userChoice;
+  if(choice.outcome==="accepted"){
+    installBtn.innerText="Installed";
+    installBtn.disabled=true;
+  }
+  deferredPrompt=null;
+};
+
+if(window.matchMedia("(display-mode: standalone)").matches || location.search.includes("homescreen=1")){
+  installBtn.style.display="none";
+  openBtn.style.display="inline-block";
+}
+
+openBtn.onclick=()=>location.href="./?homescreen=1";
+
+/* ------------------ Download this file ------------------ */
+document.getElementById("downloadBtn").onclick=()=>{
+  const html="<!doctype html>\n"+document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:"text/html"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="aryan-guddy-app.html";a.click();
+  URL.revokeObjectURL(url);
+};
+</script>
+
+</body>
+</html>
